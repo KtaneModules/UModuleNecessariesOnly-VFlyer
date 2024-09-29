@@ -165,15 +165,22 @@ public class UniformScript : MonoBehaviour {
 	}
 	void ActivateModule()
     {
-		QuickLog("The target value is {0}, which must be submitting when the time remaining in seconds is {1}, modulo 15.", targetValue, targetValue % 15);
-		QuickLog("The logic gates used on this module are {0}", relevantLogicGates.Select(a => logicGates[a]).Join(", "));
-		QuickLog("The logic gate that can always be determined is when the seconds timer, modulo 4, is {0}", determinedIdx);
 		if (linkedUModule != null)
 		{
 			/*relevantTimedValues = Enumerable.Repeat(linkedUModule.targetValue, 15).ToArray();
 			QuickLog("The value used to apply the operator will be {0}, from the linked U module.", linkedUModule.targetValue);*/
 			pairRenderer.material.color = pairingColor;
+			QuickLog("This module is linked to U #{0}. Logic gates have been shared.", linkedUModule.moduleID);
+			pairSelectable.gameObject.SetActive(true);
 		}
+		else
+		{
+			QuickLog("This module is not linked to any other U modules.");
+			pairSelectable.gameObject.SetActive(false);
+		}
+		QuickLog("The target value is {0}, which must be submitting when the time remaining in seconds is {1}, modulo 15.", targetValue, targetValue % 15);
+		QuickLog("The logic gates used on this module are {0}", relevantLogicGates.Select(a => logicGates[a]).Join(", "));
+		QuickLog("The logic gate that can always be determined is when the seconds timer, modulo 4, is {0}", determinedIdx);
 		QuickLog("The values used to apply the operator are {0}", relevantTimedValues.Join(", "));
 		QuickLog("<table class=\"ULogicTable\"><tr><th>{0}</th></tr><tr>{1}</tr></table>",
 			relevantLogicGates.Select(a => logicGates[a]).Join("</th><th>"),
@@ -279,9 +286,9 @@ public class UniformScript : MonoBehaviour {
 			case 2: return (valueA | valueB) ^ valueAll1sLength; // NOR
 			case 3: return valueA & (valueB ^ valueAll1sLength); // NIMP
 			case 4: return valueA | valueB; // OR
-			case 5: return valueA | (valueB ^ valueAll1sLength); // IMP
+			case 5: return (valueA ^ valueAll1sLength) | valueB; // IMP
 			case 6: return (valueA & valueB) ^ valueAll1sLength; // NAND
-			case 7: return (valueA ^ valueAll1sLength) | valueB; // IMPBY
+			case 7: return valueA | (valueB^ valueAll1sLength); // IMPBY
 		}
 		return valueA;
 	}

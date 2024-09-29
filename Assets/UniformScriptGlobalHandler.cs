@@ -24,27 +24,36 @@ public class UGlobalHandler {
     }
     bool TryOverrideMissionPairLimit(USettings baseSettings, out int pairCounts)
     {
-        //var usedURef = uHandlers.First();
-        var missionID = Missions.Id.Value;
-        switch (missionID ?? "freeplay")
+        try
         {
-            default:
-                break;
-        }
-        var description = Missions.Description.Value ?? "";
-        var rgxOverride = Regex.Match(description, @"\[U\]\s\d+");
-        pairCounts = baseSettings.maxUPairs;
-        var successful = false;
-        if (rgxOverride.Success)
-        {
-            int obtainedValue;
-            if (int.TryParse(rgxOverride.Value.Split().Skip(1).First(), out obtainedValue))
+            //var usedURef = uHandlers.First();
+            var missionID = Missions.Id.Value ?? "freeplay";
+            switch (missionID)
             {
-                successful = true;
-                pairCounts = obtainedValue;
+                default:
+                    break;
             }
+            var description = Missions.Description.Value ?? "";
+            var rgxOverride = Regex.Match(description, @"\[U\]\s\d+");
+            pairCounts = baseSettings.maxUPairs;
+            var successful = false;
+            if (rgxOverride.Success)
+            {
+                int obtainedValue;
+                if (int.TryParse(rgxOverride.Value.Split().Skip(1).First(), out obtainedValue))
+                {
+                    successful = true;
+                    pairCounts = obtainedValue;
+                }
+            }
+            return successful;
         }
-        return successful;
+        catch
+        {
+            Debug.LogErrorFormat("An exception has been thrown for attempting to override the module's handler.");
+            pairCounts = baseSettings.maxUPairs;
+            return false;
+        }
     }
     public void HandleGlobalModules()
     {
@@ -60,18 +69,11 @@ public class UGlobalHandler {
         {
             var _1stUMod = allUniformModules[x];
             var _2ndUMod = allUniformModules[x + 1];
-            _1stUMod.QuickLog("I am linked to U #{0} Sharing logic gates.", _2ndUMod.moduleID);
-            _2ndUMod.QuickLog("I am linked to U #{0} Sharing logic gates.", _1stUMod.moduleID);
             _2ndUMod.SetLocalU(_1stUMod, true);
             _1stUMod.SetLocalU(_2ndUMod);
             var pickedColor = new Color(Random.value, Random.value, Random.value);
             _2ndUMod.pairingColor = pickedColor;
             _1stUMod.pairingColor = pickedColor;
-        }
-        foreach (var unpairedUMod in allUniformModules.Skip(2 * pairsCreated))
-        {
-            unpairedUMod.QuickLog("I am not linked to any other U modules.");
-            unpairedUMod.pairSelectable.gameObject.SetActive(false);
         }
     }
 }

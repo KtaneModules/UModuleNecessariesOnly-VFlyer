@@ -16,6 +16,6 @@ MonoBehaviour:
   author: VFlyer
   description: Determine the target value of U based on the logic operators applied
     to the four channels. Multiple Us will avoid using each others' logic operators.
-  version: 1.0.1
+  version: 1.0.2
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 951fe934e71ca3543ac9475a177f33ca, type: 3}
