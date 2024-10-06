@@ -282,7 +282,7 @@ public class UniformScript : MonoBehaviour {
 		switch (idxOperator)
 		{
 			case 0: return valueA & valueB; // AND
-			case 1: return valueA ^ valueAll1sLength & valueB; // NIMPBY
+			case 1: return (valueA ^ valueAll1sLength) & valueB; // NIMPBY
 			case 2: return (valueA | valueB) ^ valueAll1sLength; // NOR
 			case 3: return valueA & (valueB ^ valueAll1sLength); // NIMP
 			case 4: return valueA | valueB; // OR
